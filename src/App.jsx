@@ -5,7 +5,12 @@ import Loading from "./components/Loading";
 import Header from "./components/Header";
 import Drawer from "@mui/material/Drawer";
 import { useDispatch, useSelector } from "react-redux";
-import { calculateBasket, setDrawer } from "./redux/slices/basketSlice";
+import {
+  calculateBasket,
+  setDrawer,
+  removeFromBasket,
+  clearBasket,
+} from "./redux/slices/basketSlice";
 import { useEffect } from "react";
 
 function App() {
@@ -27,12 +32,12 @@ function App() {
       <Drawer
         anchor="right"
         open={drawer}
-        onClose={() => dispatch(setDrawer(false))} 
+        onClose={() => dispatch(setDrawer(false))}
       >
-        {products &&
+        {products && products.length > 0 ? (
           products.map((product) => (
             <div
-              key={product.id} 
+              key={product.id}
               style={{ border: "1px solid" }}
               className="flex-row"
             >
@@ -61,6 +66,9 @@ function App() {
               </p>
 
               <button
+                onClick={
+                  () => dispatch(removeFromBasket(product.id)) 
+                }
                 style={{
                   cursor: "pointer",
                   backgroundColor: "red",
@@ -73,10 +81,30 @@ function App() {
                 X
               </button>
             </div>
-          ))}
+          ))
+        ) : (
+          <p style={{ padding: "15px" }}>Basket is empty</p>
+        )}
 
-        <div style={{ padding: "10px", fontWeight: "bold" }}>
-          Total Price: {totalAmount} €
+        <div className="flex-row">
+          <div style={{ padding: "10px", fontWeight: "bold" }}>
+            Total Price: {totalAmount} €
+          </div>
+
+          <button
+            onClick={() => dispatch(clearBasket())}
+            style={{
+              cursor: "pointer",
+              backgroundColor: "green",
+              margin: "10px",
+              width: "200px",
+              color: "white",
+              borderRadius: "10px",
+              fontSize: "24px",
+            }}
+          >
+            Order
+          </button>
         </div>
       </Drawer>
     </PageContainer>
